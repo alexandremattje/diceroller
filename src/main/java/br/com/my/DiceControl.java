@@ -86,6 +86,7 @@ public class DiceControl {
                     switch (el.type) {
                     case DICE:
                         fullDiceBuilder.append(el.value);
+                        break;
                     case NUMBER:
                         fullDiceBuilder.append("+");
                         fullDiceBuilder.append(el.value);
