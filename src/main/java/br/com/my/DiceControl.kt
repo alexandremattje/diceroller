@@ -58,27 +58,39 @@ class DiceControl {
 
     }
 
+    /**
+     *
+     */
     fun addDice(dice: String) {
         this.elements.push(DiceElement.newDice(dice))
         this.rebuild()
     }
 
+    /**
+     *
+     */
     fun addSignal(signal: String) {
         this.elements.push(DiceElement.newSignal(signal))
         this.rebuild()
     }
 
+    /**
+     *
+     */
     fun addNumber(number: String) {
         this.elements.push(DiceElement.newNumber(number))
         this.rebuild()
     }
 
+    /**
+     *
+     */
     fun removeLast() {
         this.elements.pop()
         this.rebuild()
     }
 
-    fun clearResults(){
+    private fun clearResults(){
         val it = this.elements.iterator()
         while (it.hasNext()) {
             val el = it.next()
@@ -87,6 +99,9 @@ class DiceControl {
         }
     }
 
+    /**
+     *
+     */
     fun roll() {
         clearResults()
         val it = this.elements.iterator()
