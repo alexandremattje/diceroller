@@ -12,11 +12,22 @@ class DiceControl {
         NUMBER, DICE, SIGNAL
     }
 
+    override fun toString(): String {
+        var s: String = ""
+        val it = this.elements.iterator()
+        while (it.hasNext()) {
+            val el = it.next()
+            s += el
+        }
+
+        return s
+    }
+
     private class DiceElement constructor(val type: DiceElementType, var value: String) {
         var result: ArrayList<Int> = ArrayList()
 
         override fun toString(): String {
-            return "DiceElement [type=" + this.type + ", value=" + this.value + "]"
+            return "DiceElement [type=" + this.type + ", value=" + this.value + ", result=" + this.result + "]"
         }
 
         companion object {
@@ -71,6 +82,13 @@ class DiceControl {
                             DiceElementType.SIGNAL -> previous.result.add(previous.value.toInt())
                             DiceElementType.NUMBER -> tempNumber.value += tempNumber.value
                         }
+                    }
+                }
+            } else {
+                when (el.type) {
+                    DiceElementType.NUMBER -> tempNumber = el
+                    DiceElementType.DICE -> el.result.addAll(rollOne(el, 1))
+                    else -> {
                     }
                 }
             }

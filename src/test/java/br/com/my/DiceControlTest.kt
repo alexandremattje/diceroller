@@ -72,6 +72,23 @@ class DiceControlTest : TestCase() {
         Assert.assertEquals("5d2+2d3-1d10", dc.fullDice)
     }
 
+    fun testRolld2() {
+        val dc = DiceControl()
+
+        dc.addDice("d2")
+        dc.roll()
+        System.out.println(dc.toString())
+
+        dc.roll()
+        System.out.println(dc.toString())
+        dc.roll()
+        System.out.println(dc.toString())
+        dc.roll()
+        System.out.println(dc.toString())
+        dc.roll()
+        System.out.println(dc.toString())
+    }
+
     companion object {
 
         fun suite(): Test {
