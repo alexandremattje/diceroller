@@ -100,11 +100,4 @@ class DiceControlTest : TestCase() {
         System.out.println(dc.toString())
     }
 
-    companion object {
-
-        fun suite(): Test {
-            return TestSuite(DiceControlTest::class.java)
-        }
-    }
-
 }
