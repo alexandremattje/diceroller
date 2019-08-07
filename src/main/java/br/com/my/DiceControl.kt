@@ -2,8 +2,12 @@ package br.com.my
 
 import java.security.SecureRandom
 import java.util.Stack
-import java.util.concurrent.ThreadLocalRandom
+import kotlin.collections.ArrayList
+import kotlin.collections.Collection
 
+/**
+ * DiceControl
+ */
 class DiceControl {
 
     var fullDice: String = ""
