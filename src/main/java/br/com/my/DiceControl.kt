@@ -1,6 +1,7 @@
 package br.com.my
 
 import java.util.Stack
+import java.util.concurrent.ThreadLocalRandom
 
 class DiceControl {
 
@@ -11,7 +12,8 @@ class DiceControl {
         NUMBER, DICE, SIGNAL
     }
 
-    private class DiceElement constructor(val type: DiceElementType, val value: String) {
+    private class DiceElement constructor(val type: DiceElementType, var value: String) {
+        var result: ArrayList<Int> = ArrayList()
 
         override fun toString(): String {
             return "DiceElement [type=" + this.type + ", value=" + this.value + "]"
@@ -54,6 +56,37 @@ class DiceControl {
         this.rebuild()
     }
 
+    fun roll() {
+        val it = this.elements.iterator()
+        var previous: DiceElement? = null
+        var tempNumber: DiceElement = DiceElement.newNumber("0")
+        tempNumber.result.add(0)
+        while (it.hasNext()) {
+            val el = it.next()
+            if (previous != null) {
+                when (previous.type) {
+                    DiceElementType.NUMBER -> {
+                        when (el.type) {
+                            DiceElementType.DICE -> el.result.addAll(rollOne(el, tempNumber.value.toInt()))
+                            DiceElementType.SIGNAL -> previous.result.add(previous.value.toInt())
+                            DiceElementType.NUMBER -> tempNumber.value += tempNumber.value
+                        }
+                    }
+                }
+            }
+            previous = el
+        }
+    }
+
+    private fun rollOne(el: DiceElement, qt: Int): Collection<Int> {
+        val rolls : ArrayList<Int> = ArrayList()
+        var number = el.value.substring(1).toInt()
+        for (i in 1..qt) {
+            rolls.add(ThreadLocalRandom.current().nextInt(1, number))
+        }
+        return rolls
+    }
+
     private fun rebuild() {
         val it = this.elements.iterator()
         val fullDiceBuilder = StringBuilder()
@@ -86,8 +119,6 @@ class DiceControl {
             previous = el.type
         }
         this.fullDice = fullDiceBuilder.toString()
-
-
     }
 
 }
