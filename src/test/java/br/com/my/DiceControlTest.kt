@@ -78,13 +78,24 @@ class DiceControlTest : TestCase() {
         dc.addDice("d2")
         dc.roll()
         System.out.println(dc.toString())
+    }
 
+    fun testRoll3d2() {
+        val dc = DiceControl()
+
+        dc.addNumber("3")
+        dc.addDice("d2")
         dc.roll()
         System.out.println(dc.toString())
-        dc.roll()
-        System.out.println(dc.toString())
-        dc.roll()
-        System.out.println(dc.toString())
+    }
+
+    fun testRoll3d2Plus1() {
+        val dc = DiceControl()
+
+        dc.addNumber("3")
+        dc.addDice("d2")
+        dc.addSignal("+")
+        dc.addNumber("1")
         dc.roll()
         System.out.println(dc.toString())
     }

@@ -1,5 +1,6 @@
 package br.com.my
 
+import java.security.SecureRandom
 import java.util.Stack
 import java.util.concurrent.ThreadLocalRandom
 
@@ -17,7 +18,9 @@ class DiceControl {
         val it = this.elements.iterator()
         while (it.hasNext()) {
             val el = it.next()
-            s += el
+            if (el.result.size > 0) {
+                s += el
+            }
         }
 
         return s
@@ -28,6 +31,10 @@ class DiceControl {
 
         override fun toString(): String {
             return "DiceElement [type=" + this.type + ", value=" + this.value + ", result=" + this.result + "]"
+        }
+
+        fun clear() {
+            result.clear()
         }
 
         companion object {
@@ -67,7 +74,17 @@ class DiceControl {
         this.rebuild()
     }
 
+    fun clearResults(){
+        val it = this.elements.iterator()
+        while (it.hasNext()) {
+            val el = it.next()
+            el.clear()
+
+        }
+    }
+
     fun roll() {
+        clearResults()
         val it = this.elements.iterator()
         var previous: DiceElement? = null
         var tempNumber: DiceElement = DiceElement.newNumber("0")
@@ -100,7 +117,7 @@ class DiceControl {
         val rolls : ArrayList<Int> = ArrayList()
         var number = el.value.substring(1).toInt()
         for (i in 1..qt) {
-            rolls.add(ThreadLocalRandom.current().nextInt(1, number))
+            rolls.add(SecureRandom.getInstanceStrong().nextInt(number) + 1)
         }
         return rolls
     }
