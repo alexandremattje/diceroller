@@ -10,7 +10,7 @@ import junit.framework.TestSuite
  */
 class DiceControlTest : TestCase() {
 
-    fun test1() {
+    internal fun test1() {
         val dc = DiceControl()
 
         dc.addDice("d2")
@@ -22,7 +22,7 @@ class DiceControlTest : TestCase() {
         Assert.assertEquals(dc.fullDice, "d2+2d3-1")
     }
 
-    fun test2() {
+    internal fun test2() {
         val dc = DiceControl()
 
         dc.addNumber("5")
@@ -37,7 +37,7 @@ class DiceControlTest : TestCase() {
         Assert.assertEquals(dc.fullDice, "5d2+2d3-1+d6")
     }
 
-    fun test3() {
+    internal fun test3() {
         val dc = DiceControl()
 
         dc.addNumber("5")
@@ -54,7 +54,7 @@ class DiceControlTest : TestCase() {
         Assert.assertEquals(dc.fullDice, "5d2+2d3-1+1")
     }
 
-    fun test4() {
+    internal fun test4() {
         val dc = DiceControl()
 
         dc.addNumber("5")
@@ -72,7 +72,7 @@ class DiceControlTest : TestCase() {
         Assert.assertEquals("5d2+2d3-1d10", dc.fullDice)
     }
 
-    fun testRolld2() {
+    internal fun testRolld2() {
         val dc = DiceControl()
 
         dc.addDice("d2")
@@ -80,7 +80,7 @@ class DiceControlTest : TestCase() {
         System.out.println(dc.toString())
     }
 
-    fun testRoll3d2() {
+    internal fun testRoll3d2() {
         val dc = DiceControl()
 
         dc.addNumber("3")
@@ -89,7 +89,7 @@ class DiceControlTest : TestCase() {
         System.out.println(dc.toString())
     }
 
-    fun testRoll3d2Plus1() {
+    internal fun testRoll3d2Plus1() {
         val dc = DiceControl()
 
         dc.addNumber("3")
