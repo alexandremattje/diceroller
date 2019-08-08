@@ -94,7 +94,7 @@ class DiceControlTest : TestCase() {
 
         dc.addNumber("3")
         dc.addDice("d2")
-        dc.addSignal("+")git
+        dc.addSignal("+")
         dc.addNumber("1")
         dc.roll()
         System.out.println(dc.toString())
