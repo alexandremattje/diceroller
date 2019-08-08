@@ -34,6 +34,7 @@ class DiceControl {
     private class DiceElement constructor(val type: DiceElementType, var value: String) {
         var result: ArrayList<Int> = ArrayList()
         var roll: Boolean = true
+        var rolled: Boolean = false
 
         override fun toString(): String {
             return "DiceElement [type=" + this.type + ", value=" + this.value + ", result=" + this.result + ", roll=" + roll + "]"
@@ -41,6 +42,25 @@ class DiceControl {
 
         fun clear() {
             result.clear()
+        }
+
+        fun roll(qt: Int) {
+            when (this.type) {
+                NUMBER -> this.result.add(this.value.toInt())
+                DICE -> result.addAll(rollOne(qt))
+                SIGNAL -> {
+                }
+            }
+
+        }
+
+        private fun rollOne(qt: Int): Collection<Int> {
+            val rolls: ArrayList<Int> = ArrayList()
+            val number = this.value.substring(1).toInt()
+            for (i in 1..qt) {
+                rolls.add(SecureRandom.getInstanceStrong().nextInt(number) + 1)
+            }
+            return rolls
         }
 
         companion object {
@@ -118,6 +138,9 @@ class DiceControl {
             }
             previous = el
         }
+        if (!previous.rolled) {
+            rollCurrentElement(previous)
+        }
     }
 
     private fun rollCurrentElement(el: DiceElement) {
@@ -133,7 +156,7 @@ class DiceControl {
         when (previous.type) {
             NUMBER -> {
                 when (el.type) {
-                    DICE -> el.result.addAll(rollOne(el, previous.value.toInt()))
+                    DICE -> el.roll(previous.value.toInt())
                     SIGNAL -> {
                         if (previous.roll) {
                             previous.result.add(previous.value.toInt())
@@ -146,20 +169,8 @@ class DiceControl {
             DICE -> {
             }
             SIGNAL -> {
-                if (el.roll && el.type == NUMBER) {
-                    el.result.add(el.value.toInt())
-                }
             }
         }
-    }
-
-    private fun rollOne(el: DiceElement, qt: Int): Collection<Int> {
-        val rolls: ArrayList<Int> = ArrayList()
-        var number = el.value.substring(1).toInt()
-        for (i in 1..qt) {
-            rolls.add(SecureRandom.getInstanceStrong().nextInt(number) + 1)
-        }
-        return rolls
     }
 
     private fun rebuild() {
@@ -208,8 +219,7 @@ class DiceControl {
             NUMBER -> when (el.type) {
                 DICE, SIGNAL -> {
                     if (tempNumber1 != null) {
-                        // fullDiceBuilder.append(tempNumber1.value)
-                        tempNumber1.roll = false
+                        tempNumber1.roll = el.type == SIGNAL
                         this.elementsToRoll.push(tempNumber1)
                         tempNumber1 = null
                     }
