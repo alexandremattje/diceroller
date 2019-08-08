@@ -18,12 +18,12 @@ class DiceControl {
     }
 
     override fun toString(): String {
-        var s: String = ""
+        var s: String = fullDice
         val it = this.elements.iterator()
         while (it.hasNext()) {
             val el = it.next()
             if (el.result.size > 0) {
-                s += el
+                s += el.result
             }
         }
 
@@ -122,7 +122,14 @@ class DiceControl {
     private fun rollCurrentElement(el: DiceElement, tempNumber: DiceElement): DiceElement {
         var tempNumber1 = tempNumber
         when (el.type) {
-            NUMBER -> tempNumber1 = el
+            NUMBER -> {
+                tempNumber1 = el
+                if (tempNumber1.result.size == 0) {
+                    tempNumber1.result.add(tempNumber1.value.toInt())
+                } else {
+                    tempNumber1.result[0] = tempNumber1.value.toInt()
+                }
+            }
             DICE -> el.result.addAll(rollOne(el, 1))
             SIGNAL -> {
             }
