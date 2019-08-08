@@ -12,6 +12,7 @@ class DiceControl {
 
     var fullDice: String = ""
     private val elements = Stack<DiceControl.DiceElement>()
+    private lateinit var elementsToRoll: Stack<DiceControl.DiceElement>
 
     private enum class DiceElementType {
         NUMBER, DICE, SIGNAL
@@ -19,7 +20,7 @@ class DiceControl {
 
     override fun toString(): String {
         var s: String = fullDice
-        val it = this.elements.iterator()
+        val it = this.elementsToRoll.iterator()
         while (it.hasNext()) {
             val el = it.next()
             if (el.result.size > 0) {
@@ -32,9 +33,10 @@ class DiceControl {
 
     private class DiceElement constructor(val type: DiceElementType, var value: String) {
         var result: ArrayList<Int> = ArrayList()
+        var roll: Boolean = true
 
         override fun toString(): String {
-            return "DiceElement [type=" + this.type + ", value=" + this.value + ", result=" + this.result + "]"
+            return "DiceElement [type=" + this.type + ", value=" + this.value + ", result=" + this.result + ", roll=" + roll + "]"
         }
 
         fun clear() {
@@ -95,7 +97,6 @@ class DiceControl {
         while (it.hasNext()) {
             val el = it.next()
             el.clear()
-
         }
     }
 
@@ -104,49 +105,50 @@ class DiceControl {
      */
     fun roll() {
         clearResults()
-        val it = this.elements.iterator()
+        val it = this.elementsToRoll.iterator()
         var previous: DiceElement? = null
-        var tempNumber: DiceElement = DiceElement.newNumber("0")
-        tempNumber.result.add(0)
         while (it.hasNext()) {
             val el = it.next()
             if (previous != null) {
-                rollPreviousElement(previous, el, tempNumber)
+                rollPreviousElement(previous, el)
             } else {
-                tempNumber = rollCurrentElement(el, tempNumber)
+                if (el.roll) {
+                    rollCurrentElement(el)
+                }
             }
             previous = el
         }
     }
 
-    private fun rollCurrentElement(el: DiceElement, tempNumber: DiceElement): DiceElement {
-        var tempNumber1 = tempNumber
+    private fun rollCurrentElement(el: DiceElement) {
         when (el.type) {
-            NUMBER -> {
-                tempNumber1 = el
-                if (tempNumber1.result.size == 0) {
-                    tempNumber1.result.add(tempNumber1.value.toInt())
-                } else {
-                    tempNumber1.result[0] = tempNumber1.value.toInt()
-                }
-            }
+            NUMBER -> el.result.add(el.value.toInt())
             DICE -> el.result.addAll(rollOne(el, 1))
             SIGNAL -> {
             }
         }
-        return tempNumber1
     }
 
-    private fun rollPreviousElement(previous: DiceElement, el: DiceElement, tempNumber: DiceElement) {
+    private fun rollPreviousElement(previous: DiceElement, el: DiceElement) {
         when (previous.type) {
             NUMBER -> {
                 when (el.type) {
-                    DICE -> el.result.addAll(rollOne(el, tempNumber.value.toInt()))
-                    SIGNAL -> previous.result.add(previous.value.toInt())
-                    NUMBER -> tempNumber.value += tempNumber.value
+                    DICE -> el.result.addAll(rollOne(el, previous.value.toInt()))
+                    SIGNAL -> {
+                        if (previous.roll) {
+                            previous.result.add(previous.value.toInt())
+                        }
+                    }
+                    NUMBER -> {
+                    }
                 }
             }
-            DICE, SIGNAL -> {
+            DICE -> {
+            }
+            SIGNAL -> {
+                if (el.roll && el.type == NUMBER) {
+                    el.result.add(el.value.toInt())
+                }
             }
         }
     }
@@ -161,41 +163,84 @@ class DiceControl {
     }
 
     private fun rebuild() {
+        this.elementsToRoll = Stack()
         val it = this.elements.iterator()
         val fullDiceBuilder = StringBuilder()
         var previous: DiceElementType? = null
+        var tempNumber: DiceElement? = null
         while (it.hasNext()) {
             val el = it.next()
 
             if (previous != null) {
-                rebuildPreviousElement(previous, el, fullDiceBuilder)
+                tempNumber = rebuildPreviousElement(previous, el, fullDiceBuilder, tempNumber)
             } else {
+                if (el.type == NUMBER) {
+                    tempNumber = DiceElement.newNumber("")
+                    tempNumber.value = el.value
+                } else {
+                    this.elementsToRoll.push(el)
+                }
                 fullDiceBuilder.append(el.value)
             }
             previous = el.type
         }
+        if (tempNumber != null) {
+            this.elementsToRoll.push(tempNumber)
+        }
+
         this.fullDice = fullDiceBuilder.toString()
     }
 
-    private fun rebuildPreviousElement(previous: DiceElementType, el: DiceElement, fullDiceBuilder: StringBuilder) {
+    private fun rebuildPreviousElement(previous: DiceElementType, el: DiceElement, fullDiceBuilder: StringBuilder, tempNumber: DiceElement?): DiceElement? {
+        var tempNumber1 = tempNumber
         when (previous) {
             DICE -> when (el.type) {
                 DICE, NUMBER -> {
                     fullDiceBuilder.append("+")
                     fullDiceBuilder.append(el.value)
+                    this.elementsToRoll.push(el)
                 }
-                SIGNAL -> fullDiceBuilder.append(el.value)
+                SIGNAL -> {
+                    fullDiceBuilder.append(el.value)
+                    this.elementsToRoll.push(el)
+                }
             }
             NUMBER -> when (el.type) {
-                DICE, SIGNAL -> fullDiceBuilder.append(el.value)
-                NUMBER -> fullDiceBuilder.append(el.value)
+                DICE, SIGNAL -> {
+                    if (tempNumber1 != null) {
+                        // fullDiceBuilder.append(tempNumber1.value)
+                        tempNumber1.roll = false
+                        this.elementsToRoll.push(tempNumber1)
+                        tempNumber1 = null
+                    }
+                    fullDiceBuilder.append(el.value)
+                    this.elementsToRoll.push(el)
+                }
+                NUMBER -> {
+                    if (tempNumber1 == null) {
+                        tempNumber1 = DiceElement.newNumber("")
+                    }
+                    tempNumber1.value += el.value
+                    fullDiceBuilder.append(el.value)
+                }
             }
             SIGNAL -> when (el.type) {
-                DICE, NUMBER -> fullDiceBuilder.append(el.value)
+                DICE -> {
+                    fullDiceBuilder.append(el.value)
+                    this.elementsToRoll.push(el)
+                }
+                NUMBER -> {
+                    if (tempNumber1 == null) {
+                        tempNumber1 = DiceElement.newNumber("")
+                        tempNumber1.value += el.value
+                    }
+                    fullDiceBuilder.append(el.value)
+                }
                 SIGNAL -> {
                 }
             }
         }
+        return tempNumber1
     }
-
 }
+
