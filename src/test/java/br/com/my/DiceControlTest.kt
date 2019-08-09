@@ -76,8 +76,7 @@ class DiceControlTest : TestCase() {
         val dc = DiceControl()
 
         dc.addDice("d2")
-        dc.roll()
-        System.out.println(dc.toString())
+        System.out.println("" + dc.roll() + ":" + dc.toString())
     }
 
     internal fun testRoll3d2() {
@@ -85,8 +84,7 @@ class DiceControlTest : TestCase() {
 
         dc.addNumber("3")
         dc.addDice("d2")
-        dc.roll()
-        System.out.println(dc.toString())
+        System.out.println("" + dc.roll() + ":" + dc.toString())
     }
 
     internal fun testRoll3d2Plus1() {
@@ -96,8 +94,7 @@ class DiceControlTest : TestCase() {
         dc.addDice("d2")
         dc.addSignal("+")
         dc.addNumber("1")
-        dc.roll()
-        System.out.println(dc.toString())
+        System.out.println("" + dc.roll() + ":" + dc.toString())
     }
 
     internal fun testRoll23d6Plus45() {
@@ -109,8 +106,7 @@ class DiceControlTest : TestCase() {
         dc.addSignal("+")
         dc.addNumber("4")
         dc.addNumber("5")
-        dc.roll()
-        System.out.println(dc.toString())
+        System.out.println("" + dc.roll() + ":" + dc.toString())
     }
 
     internal fun testRollAll() {
@@ -125,8 +121,7 @@ class DiceControlTest : TestCase() {
         dc.addDice("d12")
         dc.addDice("d20")
         dc.addDice("d100")
-        dc.roll()
-        System.out.println(dc.toString())
+        System.out.println("" + dc.roll() + ":" + dc.toString())
     }
 
     internal fun testRoll23d6Plus45Plus4d23Plus234() {
@@ -145,8 +140,7 @@ class DiceControlTest : TestCase() {
         dc.addNumber("2")
         dc.addNumber("3")
         dc.addNumber("4")
-        dc.roll()
-        System.out.println(dc.toString())
+        System.out.println("" + dc.roll() + ":" + dc.toString())
     }
 
 }

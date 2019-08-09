@@ -45,7 +45,7 @@ class DiceControl {
         }
 
         fun roll() {
-            roll(1 )
+            roll(1)
         }
 
         fun roll(qt: Int) {
@@ -127,7 +127,7 @@ class DiceControl {
     /**
      *
      */
-    fun roll() {
+    fun roll(): Int {
         clearResults()
         val it = this.elementsToRoll.iterator()
         var previous: DiceElement? = null
@@ -145,6 +145,14 @@ class DiceControl {
         if (!previous!!.rolled) {
             rollCurrentElement(previous!!)
         }
+
+        return rolled()
+    }
+
+    private fun rolled(): Int {
+        var roll = 0
+        this.elementsToRoll.forEach { it -> it.result.forEach { t -> roll += t } }
+        return roll
     }
 
     private fun rollCurrentElement(el: DiceElement) {
