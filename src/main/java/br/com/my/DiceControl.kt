@@ -44,6 +44,10 @@ class DiceControl {
             result.clear()
         }
 
+        fun roll() {
+            roll(1 )
+        }
+
         fun roll(qt: Int) {
             when (this.type) {
                 NUMBER -> this.result.add(this.value.toInt())
@@ -51,7 +55,7 @@ class DiceControl {
                 SIGNAL -> {
                 }
             }
-
+            this.rolled = true
         }
 
         private fun rollOne(qt: Int): Collection<Int> {
@@ -138,15 +142,15 @@ class DiceControl {
             }
             previous = el
         }
-        if (!previous.rolled) {
-            rollCurrentElement(previous)
+        if (!previous!!.rolled) {
+            rollCurrentElement(previous!!)
         }
     }
 
     private fun rollCurrentElement(el: DiceElement) {
         when (el.type) {
-            NUMBER -> el.result.add(el.value.toInt())
-            DICE -> el.result.addAll(rollOne(el, 1))
+            NUMBER -> el.roll()
+            DICE -> el.roll(1)
             SIGNAL -> {
             }
         }
@@ -156,10 +160,14 @@ class DiceControl {
         when (previous.type) {
             NUMBER -> {
                 when (el.type) {
-                    DICE -> el.roll(previous.value.toInt())
+                    DICE -> {
+                        el.roll(previous.value.toInt())
+                        el.rolled = true
+                    }
                     SIGNAL -> {
                         if (previous.roll) {
                             previous.result.add(previous.value.toInt())
+                            previous.rolled = true
                         }
                     }
                     NUMBER -> {
@@ -167,6 +175,16 @@ class DiceControl {
                 }
             }
             DICE -> {
+                when (el.type) {
+                    DICE -> {
+                        el.roll(1)
+                        el.rolled = true
+                    }
+                    SIGNAL -> {
+                    }
+                    NUMBER -> {
+                    }
+                }
             }
             SIGNAL -> {
             }

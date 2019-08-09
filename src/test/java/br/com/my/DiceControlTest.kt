@@ -113,6 +113,22 @@ class DiceControlTest : TestCase() {
         System.out.println(dc.toString())
     }
 
+    internal fun testRollAll() {
+        val dc = DiceControl()
+
+        dc.addDice("d2")
+        dc.addDice("d3")
+        dc.addDice("d4")
+        dc.addDice("d6")
+        dc.addDice("d8")
+        dc.addDice("d10")
+        dc.addDice("d12")
+        dc.addDice("d20")
+        dc.addDice("d100")
+        dc.roll()
+        System.out.println(dc.toString())
+    }
+
     internal fun testRoll23d6Plus45Plus4d23Plus234() {
         val dc = DiceControl()
 
