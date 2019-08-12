@@ -1,9 +1,9 @@
 package br.com.my
 
 import br.com.my.DiceControl.DiceElementType.*
-import java.security.SecureRandom
 import java.util.Stack
 import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 /**
  * DiceControl
@@ -62,12 +62,14 @@ class DiceControl {
             val rolls: ArrayList<Int> = ArrayList()
             val number = this.value.substring(1).toInt()
             for (i in 1..qt) {
-                rolls.add(SecureRandom.getInstanceStrong().nextInt(number) + 1)
+                rolls.add(random.nextInt(1, number + 1))
             }
             return rolls
         }
 
         companion object {
+
+           val random = Random
 
             fun newDice(dice: String): DiceElement {
                 return DiceElement(DICE, dice)
@@ -112,8 +114,10 @@ class DiceControl {
      *
      */
     fun removeLast() {
-        this.elements.pop()
-        this.rebuild()
+        if (!elements.isEmpty()) {
+            this.elements.pop()
+            this.rebuild()
+        }
     }
 
     private fun clearResults() {
@@ -128,6 +132,9 @@ class DiceControl {
      *
      */
     fun roll(): Int {
+        if (elements.empty()) {
+            return -1
+        }
         clearResults()
         val it = this.elementsToRoll.iterator()
         var previous: DiceElement? = null
@@ -277,6 +284,12 @@ class DiceControl {
             }
         }
         return tempNumber1
+    }
+
+    fun clear() {
+        this.elements.clear()
+        this.elementsToRoll.clear()
+        this.rebuild()
     }
 }
 
