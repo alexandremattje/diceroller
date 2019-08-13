@@ -286,6 +286,9 @@ class DiceControl {
         return tempNumber1
     }
 
+    /**
+     * 
+     */
     fun clear() {
         this.elements.clear()
         this.elementsToRoll.clear()
